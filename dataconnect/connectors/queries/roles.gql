@@ -1,0 +1,50 @@
+# ============================================
+# ROLE QUERIES
+# ============================================
+
+# Get all active roles
+query ListRoles(
+  $isActive: Boolean = true
+) @auth(level: USER_EMAIL_VERIFIED) {
+  roles(
+    where:   { isActive: { eq: $isActive } }
+    orderBy: [{ level: DESC }, { name: ASC }]
+  ) {
+    id
+    name
+    code
+    description
+    level
+    isActive
+  }
+}
+
+# Get role by ID with employees
+query GetRoleById($id: UUID!) @auth(level: USER_EMAIL_VERIFIED) {
+  role(id: $id) {
+    id
+    name
+    code
+    description
+    level
+    isActive
+    createdAt
+    updatedAt
+    employees(
+      where:   { isActive: { eq: true } }
+      orderBy: [{ lastName: ASC }]
+    ) {
+      id
+      employeeNumber
+      firstName
+      lastName
+      email
+      jobTitle
+      department {
+        id
+        name
+        code
+      }
+    }
+  }
+}

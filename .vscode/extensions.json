@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "firebase.vscode-firebase-data-connect",
+    "GraphQL.vscode-graphql",
+    "GraphQL.vscode-graphql-syntax",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "ms-azuretools.vscode-docker"
+  ]
+}

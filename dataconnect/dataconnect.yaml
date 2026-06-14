@@ -1,0 +1,25 @@
+# ============================================
+# FIREBASE DATA CONNECT - LOCAL EMULATOR
+# Used by: firebase emulators:start
+# ============================================
+specVersion: "v1beta"
+
+serviceId: "clsql-react-local"
+
+location: "us-central1"
+
+schema:
+  source: "./schema.gql"
+  datasource:
+    postgresql:
+      database: "employee_db"
+      localConnectionString: "postgresql://postgres:postgres@localhost:5432/employee_db"
+
+connectorDirs:
+  - "./connectors"
+
+generate:
+  javascriptSdk:
+    outputDir: "../src/generated/dataconnect"
+    package:   "@clsql/dataconnect"
+    packageJsonDir: "../"

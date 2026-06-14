@@ -1,0 +1,138 @@
+# ============================================
+# PROJECT QUERIES
+# ============================================
+
+# Get all projects with relations
+query ListProjects(
+  $isActive: Boolean = true
+  $limit:    Int     = 20
+  $offset:   Int     = 0
+) @auth(level: USER_EMAIL_VERIFIED) {
+  projects(
+    where:   { isActive: { eq: $isActive } }
+    limit:   $limit
+    offset:  $offset
+    orderBy: [{ name: ASC }]
+  ) {
+    id
+    name
+    code
+    description
+    status
+    priority
+    startDate
+    endDate
+    budget
+    currency
+    isActive
+    department {
+      id
+      name
+      code
+    }
+    manager {
+      id
+      firstName
+      lastName
+      email
+      profilePicture
+    }
+  }
+}
+
+# Get single project with full assignment details
+query GetProjectById($id: UUID!) @auth(level: USER_EMAIL_VERIFIED) {
+  project(id: $id) {
+    id
+    name
+    code
+    description
+    status
+    priority
+    startDate
+    endDate
+    budget
+    currency
+    isActive
+    createdAt
+    updatedAt
+    createdBy
+    updatedBy
+    department {
+      id
+      name
+      code
+    }
+    manager {
+      id
+      employeeNumber
+      firstName
+      lastName
+      email
+      jobTitle
+      profilePicture
+    }
+    assignments(
+      where:   { isActive: { eq: true } }
+      orderBy: [{ startDate: DESC }]
+    ) {
+      id
+      role
+      allocation
+      startDate
+      endDate
+      isActive
+      notes
+      employee {
+        id
+        employeeNumber
+        firstName
+        lastName
+        email
+        jobTitle
+        profilePicture
+        department {
+          id
+          name
+          code
+        }
+      }
+    }
+  }
+}
+
+# Get projects by status
+query GetProjectsByStatus(
+  $status: String!
+  $limit:  Int = 20
+  $offset: Int = 0
+) @auth(level: USER_EMAIL_VERIFIED) {
+  projects(
+    where: {
+      status:   { eq: $status }
+      isActive: { eq: true }
+    }
+    limit:   $limit
+    offset:  $offset
+    orderBy: [{ priority: ASC }, { name: ASC }]
+  ) {
+    id
+    name
+    code
+    status
+    priority
+    startDate
+    endDate
+    budget
+    department {
+      id
+      name
+      code
+    }
+    manager {
+      id
+      firstName
+      lastName
+    }
+  }
+}

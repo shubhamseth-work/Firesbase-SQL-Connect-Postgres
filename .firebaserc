@@ -1,0 +1,10 @@
+{
+  "projects": {
+    "default": "firbaseapplication-891be",
+    "clsql-firebase-sandbox": "firbaseapplication-891be",
+    "_comment": "cl-sql-postgress-firebase-react firbaseapplication-891be"
+    
+  },
+  "targets": {},
+  "etags": {}
+}

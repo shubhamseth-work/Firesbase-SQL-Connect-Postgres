@@ -1,0 +1,2 @@
+-- ROLLBACK V007
+DROP TABLE IF EXISTS employee_projects CASCADE;

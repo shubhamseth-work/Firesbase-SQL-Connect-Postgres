@@ -1,0 +1,69 @@
+# ============================================
+# DEPARTMENT MUTATIONS
+# ============================================
+
+# Create department
+mutation CreateDepartment(
+  $name:        String!
+  $code:        String!
+  $description: String
+  $createdBy:   String!
+) @auth(level: USER_EMAIL_VERIFIED) {
+  department_insert(data: {
+    name:        $name
+    code:        $code
+    description: $description
+    createdBy:   $createdBy
+    updatedBy:   $createdBy
+  }) {
+    id
+    name
+    code
+    createdAt
+  }
+}
+
+# Update department
+mutation UpdateDepartment(
+  $id:          UUID!
+  $name:        String
+  $code:        String
+  $description: String
+  $isActive:    Boolean
+  $updatedBy:   String!
+) @auth(level: USER_EMAIL_VERIFIED) {
+  department_update(
+    id: $id
+    data: {
+      name:        $name
+      code:        $code
+      description: $description
+      isActive:    $isActive
+      updatedBy:   $updatedBy
+    }
+  ) {
+    id
+    name
+    code
+    isActive
+    updatedAt
+  }
+}
+
+# Soft delete department
+mutation DeleteDepartment(
+  $id:        UUID!
+  $updatedBy: String!
+) @auth(level: USER_EMAIL_VERIFIED) {
+  department_update(
+    id: $id
+    data: {
+      isActive:  false
+      updatedBy: $updatedBy
+    }
+  ) {
+    id
+    isActive
+    updatedAt
+  }
+}

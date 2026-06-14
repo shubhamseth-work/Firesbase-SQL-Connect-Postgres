@@ -1,0 +1,156 @@
+# ============================================
+# EMPLOYEE MUTATIONS
+# ============================================
+
+# Create new employee
+mutation CreateEmployee(
+  $firstName:        String!
+  $lastName:         String!
+  $middleName:       String
+  $email:            String!
+  $personalEmail:    String
+  $phone:            String
+  $dateOfBirth:      Date
+  $gender:           String
+  $nationality:      String
+  $hireDate:         Date!
+  $employmentStatus: String!
+  $employmentType:   String!
+  $jobTitle:         String
+  $salary:           Float
+  $currency:         String
+  $departmentId:     UUID
+  $roleId:           UUID
+  $managerId:        UUID
+  $firebaseUid:      String
+  $createdBy:        String!
+) @auth(level: USER_EMAIL_VERIFIED) {
+  employee_insert(data: {
+    firstName:        $firstName
+    lastName:         $lastName
+    middleName:       $middleName
+    email:            $email
+    personalEmail:    $personalEmail
+    phone:            $phone
+    dateOfBirth:      $dateOfBirth
+    gender:           $gender
+    nationality:      $nationality
+    hireDate:         $hireDate
+    employmentStatus: $employmentStatus
+    employmentType:   $employmentType
+    jobTitle:         $jobTitle
+    salary:           $salary
+    currency:         $currency
+    departmentId:     $departmentId
+    roleId:           $roleId
+    managerId:        $managerId
+    firebaseUid:      $firebaseUid
+    createdBy:        $createdBy
+    updatedBy:        $createdBy
+  }) {
+    id
+    employeeNumber
+    firstName
+    lastName
+    email
+    employmentStatus
+    hireDate
+    createdAt
+  }
+}
+
+# Update employee
+mutation UpdateEmployee(
+  $id:               UUID!
+  $firstName:        String
+  $lastName:         String
+  $middleName:       String
+  $phone:            String
+  $personalEmail:    String
+  $dateOfBirth:      Date
+  $gender:           String
+  $nationality:      String
+  $employmentStatus: String
+  $employmentType:   String
+  $jobTitle:         String
+  $salary:           Float
+  $currency:         String
+  $departmentId:     UUID
+  $roleId:           UUID
+  $managerId:        UUID
+  $terminationDate:  Date
+  $profilePicture:   String
+  $updatedBy:        String!
+) @auth(level: USER_EMAIL_VERIFIED) {
+  employee_update(
+    id: $id
+    data: {
+      firstName:        $firstName
+      lastName:         $lastName
+      middleName:       $middleName
+      phone:            $phone
+      personalEmail:    $personalEmail
+      dateOfBirth:      $dateOfBirth
+      gender:           $gender
+      nationality:      $nationality
+      employmentStatus: $employmentStatus
+      employmentType:   $employmentType
+      jobTitle:         $jobTitle
+      salary:           $salary
+      currency:         $currency
+      departmentId:     $departmentId
+      roleId:           $roleId
+      managerId:        $managerId
+      terminationDate:  $terminationDate
+      profilePicture:   $profilePicture
+      updatedBy:        $updatedBy
+    }
+  ) {
+    id
+    employeeNumber
+    firstName
+    lastName
+    email
+    employmentStatus
+    updatedAt
+  }
+}
+
+# Soft delete employee
+mutation DeleteEmployee(
+  $id:        UUID!
+  $updatedBy: String!
+) @auth(level: USER_EMAIL_VERIFIED) {
+  employee_update(
+    id: $id
+    data: {
+      isActive:         false
+      employmentStatus: "TERMINATED"
+      updatedBy:        $updatedBy
+    }
+  ) {
+    id
+    isActive
+    employmentStatus
+    updatedAt
+  }
+}
+
+# Update employee profile picture
+mutation UpdateEmployeeProfilePicture(
+  $id:             UUID!
+  $profilePicture: String!
+  $updatedBy:      String!
+) @auth(level: USER_EMAIL_VERIFIED) {
+  employee_update(
+    id: $id
+    data: {
+      profilePicture: $profilePicture
+      updatedBy:      $updatedBy
+    }
+  ) {
+    id
+    profilePicture
+    updatedAt
+  }
+}

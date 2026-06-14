@@ -1,0 +1,10 @@
+projects:
+  dataconnect:
+    schema:
+      - dataconnect/schema.gql
+    documents:
+      - dataconnect/connectors/**/*.gql
+    extensions:
+      endpoints:
+        local:
+          url: http://localhost:9399/graphql

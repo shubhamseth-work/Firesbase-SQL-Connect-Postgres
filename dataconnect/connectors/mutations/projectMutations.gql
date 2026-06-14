@@ -1,0 +1,164 @@
+# ============================================
+# PROJECT MUTATIONS
+# ============================================
+
+# Create project
+mutation CreateProject(
+  $name:         String!
+  $code:         String!
+  $description:  String
+  $status:       String!
+  $priority:     String!
+  $startDate:    Date
+  $endDate:      Date
+  $budget:       Float
+  $currency:     String
+  $departmentId: UUID
+  $managerId:    UUID
+  $createdBy:    String!
+) @auth(level: USER_EMAIL_VERIFIED) {
+  project_insert(data: {
+    name:         $name
+    code:         $code
+    description:  $description
+    status:       $status
+    priority:     $priority
+    startDate:    $startDate
+    endDate:      $endDate
+    budget:       $budget
+    currency:     $currency
+    departmentId: $departmentId
+    managerId:    $managerId
+    createdBy:    $createdBy
+    updatedBy:    $createdBy
+  }) {
+    id
+    name
+    code
+    status
+    priority
+    createdAt
+  }
+}
+
+# Update project
+mutation UpdateProject(
+  $id:           UUID!
+  $name:         String
+  $description:  String
+  $status:       String
+  $priority:     String
+  $startDate:    Date
+  $endDate:      Date
+  $budget:       Float
+  $currency:     String
+  $departmentId: UUID
+  $managerId:    UUID
+  $isActive:     Boolean
+  $updatedBy:    String!
+) @auth(level: USER_EMAIL_VERIFIED) {
+  project_update(
+    id: $id
+    data: {
+      name:         $name
+      description:  $description
+      status:       $status
+      priority:     $priority
+      startDate:    $startDate
+      endDate:      $endDate
+      budget:       $budget
+      currency:     $currency
+      departmentId: $departmentId
+      managerId:    $managerId
+      isActive:     $isActive
+      updatedBy:    $updatedBy
+    }
+  ) {
+    id
+    name
+    status
+    priority
+    updatedAt
+  }
+}
+
+# Delete project (soft)
+mutation DeleteProject(
+  $id:        UUID!
+  $updatedBy: String!
+) @auth(level: USER_EMAIL_VERIFIED) {
+  project_update(
+    id: $id
+    data: {
+      isActive:  false
+      status:    "ARCHIVED"
+      updatedBy: $updatedBy
+    }
+  ) {
+    id
+    isActive
+    status
+    updatedAt
+  }
+}
+
+# Assign employee to project
+mutation AssignEmployeeToProject(
+  $employeeId: UUID!
+  $projectId:  UUID!
+  $role:       String!
+  $allocation: Int!
+  $startDate:  Date!
+  $endDate:    Date
+  $notes:      String
+  $createdBy:  String!
+) @auth(level: USER_EMAIL_VERIFIED) {
+  employeeProject_insert(data: {
+    employeeId: $employeeId
+    projectId:  $projectId
+    role:       $role
+    allocation: $allocation
+    startDate:  $startDate
+    endDate:    $endDate
+    notes:      $notes
+    createdBy:  $createdBy
+    updatedBy:  $createdBy
+  }) {
+    id
+    role
+    allocation
+    startDate
+    createdAt
+    employee {
+      id
+      firstName
+      lastName
+    }
+    project {
+      id
+      name
+      code
+    }
+  }
+}
+
+# Remove employee from project (soft)
+mutation RemoveEmployeeFromProject(
+  $id:        UUID!
+  $endDate:   Date!
+  $updatedBy: String!
+) @auth(level: USER_EMAIL_VERIFIED) {
+  employeeProject_update(
+    id: $id
+    data: {
+      isActive:  false
+      endDate:   $endDate
+      updatedBy: $updatedBy
+    }
+  ) {
+    id
+    isActive
+    endDate
+    updatedAt
+  }
+}

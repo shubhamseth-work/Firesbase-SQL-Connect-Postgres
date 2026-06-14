@@ -1,0 +1,207 @@
+# ============================================
+# FIREBASE DATA CONNECT - SHARED SCHEMA
+# Shared across sandbox, nonprod, and prod
+# Maps to PostgreSQL employee_db tables
+# ============================================
+
+# ============================================
+# DEPARTMENT
+# ============================================
+type Department @table(name: "departments", singular: "department", plural: "departments") {
+  id:          UUID!     @default(expr: "uuidV4()")
+  name:        String!
+  code:        String!
+  description: String
+  isActive:    Boolean!  @default(expr: "true")  @col(name: "is_active")
+  createdAt:   Timestamp @default(expr: "request.time") @col(name: "created_at")
+  updatedAt:   Timestamp @default(expr: "request.time") @col(name: "updated_at")
+  createdBy:   String    @default(expr: "'system'")     @col(name: "created_by")
+  updatedBy:   String    @default(expr: "'system'")     @col(name: "updated_by")
+
+  # Reverse relations
+  employees: [Employee!]! @relation(references: ["departmentId"])
+  projects:  [Project!]!  @relation(references: ["departmentId"])
+}
+
+# ============================================
+# ROLE
+# ============================================
+type Role @table(name: "roles", singular: "role", plural: "roles") {
+  id:          UUID!    @default(expr: "uuidV4()")
+  name:        String!
+  code:        String!
+  description: String
+  level:       Int!     @default(expr: "1")
+  isActive:    Boolean! @default(expr: "true") @col(name: "is_active")
+  createdAt:   Timestamp @default(expr: "request.time") @col(name: "created_at")
+  updatedAt:   Timestamp @default(expr: "request.time") @col(name: "updated_at")
+  createdBy:   String    @default(expr: "'system'")     @col(name: "created_by")
+  updatedBy:   String    @default(expr: "'system'")     @col(name: "updated_by")
+
+  # Reverse relations
+  employees: [Employee!]! @relation(references: ["roleId"])
+}
+
+# ============================================
+# EMPLOYEE
+# ============================================
+type Employee @table(name: "employees", singular: "employee", plural: "employees") {
+  id:               UUID!    @default(expr: "uuidV4()")
+  employeeNumber:   String!  @col(name: "employee_number")
+  firstName:        String!  @col(name: "first_name")
+  lastName:         String!  @col(name: "last_name")
+  middleName:       String   @col(name: "middle_name")
+  email:            String!
+  personalEmail:    String   @col(name: "personal_email")
+  phone:            String
+  dateOfBirth:      Date     @col(name: "date_of_birth")
+  gender:           String
+  nationality:      String
+  hireDate:         Date!    @col(name: "hire_date")
+  terminationDate:  Date     @col(name: "termination_date")
+  employmentStatus: String!  @default(expr: "'ACTIVE'")  @col(name: "employment_status")
+  employmentType:   String!  @default(expr: "'FULL_TIME'") @col(name: "employment_type")
+  jobTitle:         String   @col(name: "job_title")
+  salary:           Float
+  currency:         String!  @default(expr: "'USD'")
+  profilePicture:   String   @col(name: "profile_picture")
+  firebaseUid:      String   @col(name: "firebase_uid")
+  isActive:         Boolean! @default(expr: "true") @col(name: "is_active")
+  createdAt:        Timestamp @default(expr: "request.time") @col(name: "created_at")
+  updatedAt:        Timestamp @default(expr: "request.time") @col(name: "updated_at")
+  createdBy:        String    @default(expr: "'system'")     @col(name: "created_by")
+  updatedBy:        String    @default(expr: "'system'")     @col(name: "updated_by")
+
+  # Relations
+  department: Department @relation(fields: ["departmentId"])
+  departmentId: UUID     @col(name: "department_id")
+
+  role: Role @relation(fields: ["roleId"])
+  roleId: UUID @col(name: "role_id")
+
+  manager: Employee @relation(fields: ["managerId"])
+  managerId: UUID   @col(name: "manager_id")
+
+  # Reverse relations
+  directReports:    [Employee!]!        @relation(references: ["managerId"])
+  addresses:        [EmployeeAddress!]! @relation(references: ["employeeId"])
+  contacts:         [EmployeeContact!]! @relation(references: ["employeeId"])
+  projectAssignments: [EmployeeProject!]! @relation(references: ["employeeId"])
+  managedProjects:  [Project!]!         @relation(references: ["managerId"])
+}
+
+# ============================================
+# EMPLOYEE ADDRESS
+# ============================================
+type EmployeeAddress @table(
+  name: "employee_addresses",
+  singular: "employeeAddress",
+  plural: "employeeAddresses"
+) {
+  id:           UUID!    @default(expr: "uuidV4()")
+  addressType:  String!  @default(expr: "'HOME'") @col(name: "address_type")
+  addressLine1: String!  @col(name: "address_line1")
+  addressLine2: String   @col(name: "address_line2")
+  city:         String!
+  state:        String
+  postalCode:   String   @col(name: "postal_code")
+  country:      String!  @default(expr: "'United States'")
+  isPrimary:    Boolean! @default(expr: "false") @col(name: "is_primary")
+  isActive:     Boolean! @default(expr: "true")  @col(name: "is_active")
+  createdAt:    Timestamp @default(expr: "request.time") @col(name: "created_at")
+  updatedAt:    Timestamp @default(expr: "request.time") @col(name: "updated_at")
+  createdBy:    String    @default(expr: "'system'")     @col(name: "created_by")
+  updatedBy:    String    @default(expr: "'system'")     @col(name: "updated_by")
+
+  # Relations
+  employee:   Employee! @relation(fields: ["employeeId"])
+  employeeId: UUID!     @col(name: "employee_id")
+}
+
+# ============================================
+# EMPLOYEE CONTACT
+# ============================================
+type EmployeeContact @table(
+  name: "employee_contacts",
+  singular: "employeeContact",
+  plural: "employeeContacts"
+) {
+  id:             UUID!   @default(expr: "uuidV4()")
+  contactType:    String! @default(expr: "'EMERGENCY'") @col(name: "contact_type")
+  firstName:      String! @col(name: "first_name")
+  lastName:       String! @col(name: "last_name")
+  relationship:   String
+  phone:          String!
+  alternatePhone: String  @col(name: "alternate_phone")
+  email:          String
+  isPrimary:      Boolean! @default(expr: "false") @col(name: "is_primary")
+  isActive:       Boolean! @default(expr: "true")  @col(name: "is_active")
+  notes:          String
+  createdAt:      Timestamp @default(expr: "request.time") @col(name: "created_at")
+  updatedAt:      Timestamp @default(expr: "request.time") @col(name: "updated_at")
+  createdBy:      String    @default(expr: "'system'")     @col(name: "created_by")
+  updatedBy:      String    @default(expr: "'system'")     @col(name: "updated_by")
+
+  # Relations
+  employee:   Employee! @relation(fields: ["employeeId"])
+  employeeId: UUID!     @col(name: "employee_id")
+}
+
+# ============================================
+# PROJECT
+# ============================================
+type Project @table(name: "projects", singular: "project", plural: "projects") {
+  id:           UUID!   @default(expr: "uuidV4()")
+  name:         String!
+  code:         String!
+  description:  String
+  status:       String! @default(expr: "'PLANNING'")
+  priority:     String! @default(expr: "'MEDIUM'")
+  startDate:    Date    @col(name: "start_date")
+  endDate:      Date    @col(name: "end_date")
+  budget:       Float
+  currency:     String! @default(expr: "'USD'")
+  isActive:     Boolean! @default(expr: "true") @col(name: "is_active")
+  createdAt:    Timestamp @default(expr: "request.time") @col(name: "created_at")
+  updatedAt:    Timestamp @default(expr: "request.time") @col(name: "updated_at")
+  createdBy:    String    @default(expr: "'system'")     @col(name: "created_by")
+  updatedBy:    String    @default(expr: "'system'")     @col(name: "updated_by")
+
+  # Relations
+  department:   Department @relation(fields: ["departmentId"])
+  departmentId: UUID        @col(name: "department_id")
+
+  manager:   Employee @relation(fields: ["managerId"])
+  managerId: UUID     @col(name: "manager_id")
+
+  # Reverse relations
+  assignments: [EmployeeProject!]! @relation(references: ["projectId"])
+}
+
+# ============================================
+# EMPLOYEE PROJECT (Junction)
+# ============================================
+type EmployeeProject @table(
+  name: "employee_projects",
+  singular: "employeeProject",
+  plural: "employeeProjects"
+) {
+  id:         UUID!   @default(expr: "uuidV4()")
+  role:       String! @default(expr: "'CONTRIBUTOR'")
+  allocation: Int!    @default(expr: "100")
+  startDate:  Date!   @col(name: "start_date")
+  endDate:    Date    @col(name: "end_date")
+  isActive:   Boolean! @default(expr: "true") @col(name: "is_active")
+  notes:      String
+  createdAt:  Timestamp @default(expr: "request.time") @col(name: "created_at")
+  updatedAt:  Timestamp @default(expr: "request.time") @col(name: "updated_at")
+  createdBy:  String    @default(expr: "'system'")     @col(name: "created_by")
+  updatedBy:  String    @default(expr: "'system'")     @col(name: "updated_by")
+
+  # Relations
+  employee:   Employee! @relation(fields: ["employeeId"])
+  employeeId: UUID!     @col(name: "employee_id")
+
+  project:   Project! @relation(fields: ["projectId"])
+  projectId: UUID!    @col(name: "project_id")
+}

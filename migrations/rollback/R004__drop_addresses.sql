@@ -1,0 +1,2 @@
+-- ROLLBACK V004
+DROP TABLE IF EXISTS employee_addresses CASCADE;

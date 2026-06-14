@@ -1,0 +1,25 @@
+# ============================================
+# FIREBASE DATA CONNECT - SANDBOX
+# ============================================
+specVersion: "v1beta"
+
+serviceId: "clsql-react-sandbox-dataconnect"
+
+location: "us-central1"
+
+schema:
+  source: "../schema.gql"
+  datasource:
+    postgresql:
+      database: "employee_db"
+      cloudSql:
+        instanceId: "clsql-react-sandbox-db"
+
+connectorDirs:
+  - "../connectors"
+
+generate:
+  javascriptSdk:
+    outputDir: "../../src/generated/dataconnect"
+    package:   "@clsql/dataconnect"
+    packageJsonDir: "../../"

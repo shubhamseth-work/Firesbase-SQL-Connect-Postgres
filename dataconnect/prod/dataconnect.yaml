@@ -1,0 +1,25 @@
+# ============================================
+# FIREBASE DATA CONNECT - PROD
+# ============================================
+specVersion: "v1beta"
+
+serviceId: "clsql-react-prod-dataconnect"
+
+location: "us-central1"
+
+schema:
+  source: "../schema.gql"
+  datasource:
+    postgresql:
+      database: "employee_db"
+      cloudSql:
+        instanceId: "clsql-react-prod-db"
+
+connectorDirs:
+  - "../connectors"
+
+generate:
+  javascriptSdk:
+    outputDir: "../../src/generated/dataconnect"
+    package:   "@clsql/dataconnect"
+    packageJsonDir: "../../"

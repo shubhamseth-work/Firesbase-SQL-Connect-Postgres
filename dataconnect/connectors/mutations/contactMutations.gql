@@ -1,0 +1,76 @@
+# ============================================
+# CONTACT MUTATIONS
+# ============================================
+
+mutation AddEmployeeContact(
+  $employeeId:     UUID!
+  $contactType:    String!
+  $firstName:      String!
+  $lastName:       String!
+  $relationship:   String
+  $phone:          String!
+  $alternatePhone: String
+  $email:          String
+  $isPrimary:      Boolean!
+  $notes:          String
+  $createdBy:      String!
+) @auth(level: USER_EMAIL_VERIFIED) {
+  employeeContact_insert(data: {
+    employeeId:     $employeeId
+    contactType:    $contactType
+    firstName:      $firstName
+    lastName:       $lastName
+    relationship:   $relationship
+    phone:          $phone
+    alternatePhone: $alternatePhone
+    email:          $email
+    isPrimary:      $isPrimary
+    notes:          $notes
+    createdBy:      $createdBy
+    updatedBy:      $createdBy
+  }) {
+    id
+    contactType
+    firstName
+    lastName
+    phone
+    isPrimary
+    createdAt
+  }
+}
+
+mutation UpdateEmployeeContact(
+  $id:             UUID!
+  $firstName:      String
+  $lastName:       String
+  $relationship:   String
+  $phone:          String
+  $alternatePhone: String
+  $email:          String
+  $isPrimary:      Boolean
+  $isActive:       Boolean
+  $notes:          String
+  $updatedBy:      String!
+) @auth(level: USER_EMAIL_VERIFIED) {
+  employeeContact_update(
+    id: $id
+    data: {
+      firstName:      $firstName
+      lastName:       $lastName
+      relationship:   $relationship
+      phone:          $phone
+      alternatePhone: $alternatePhone
+      email:          $email
+      isPrimary:      $isPrimary
+      isActive:       $isActive
+      notes:          $notes
+      updatedBy:      $updatedBy
+    }
+  ) {
+    id
+    firstName
+    lastName
+    isPrimary
+    updatedAt
+  }
+}

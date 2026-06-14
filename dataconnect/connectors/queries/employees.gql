@@ -1,0 +1,298 @@
+# ============================================
+# EMPLOYEE QUERIES
+# ============================================
+
+# Get all employees with full relations
+query ListEmployees(
+  $limit:  Int  = 20,
+  $offset: Int  = 0,
+  $isActive: Boolean = true
+) @auth(level: USER_EMAIL_VERIFIED) {
+  employees(
+    where: { isActive: { eq: $isActive } }
+    limit:  $limit
+    offset: $offset
+    orderBy: [{ lastName: ASC }, { firstName: ASC }]
+  ) {
+    id
+    employeeNumber
+    firstName
+    lastName
+    middleName
+    email
+    phone
+    jobTitle
+    employmentStatus
+    employmentType
+    hireDate
+    salary
+    currency
+    profilePicture
+    isActive
+    department {
+      id
+      name
+      code
+    }
+    role {
+      id
+      name
+      code
+      level
+    }
+    manager {
+      id
+      firstName
+      lastName
+      email
+      jobTitle
+    }
+  }
+}
+
+# Get single employee by ID with all nested data
+query GetEmployeeById($id: UUID!) @auth(level: USER_EMAIL_VERIFIED) {
+  employee(id: $id) {
+    id
+    employeeNumber
+    firstName
+    lastName
+    middleName
+    email
+    personalEmail
+    phone
+    dateOfBirth
+    gender
+    nationality
+    hireDate
+    terminationDate
+    employmentStatus
+    employmentType
+    jobTitle
+    salary
+    currency
+    profilePicture
+    firebaseUid
+    isActive
+    createdAt
+    updatedAt
+    createdBy
+    updatedBy
+    department {
+      id
+      name
+      code
+      description
+    }
+    role {
+      id
+      name
+      code
+      level
+      description
+    }
+    manager {
+      id
+      employeeNumber
+      firstName
+      lastName
+      email
+      jobTitle
+      profilePicture
+    }
+    directReports {
+      id
+      employeeNumber
+      firstName
+      lastName
+      email
+      jobTitle
+      profilePicture
+    }
+    addresses {
+      id
+      addressType
+      addressLine1
+      addressLine2
+      city
+      state
+      postalCode
+      country
+      isPrimary
+      isActive
+    }
+    contacts {
+      id
+      contactType
+      firstName
+      lastName
+      relationship
+      phone
+      alternatePhone
+      email
+      isPrimary
+      isActive
+    }
+    projectAssignments {
+      id
+      role
+      allocation
+      startDate
+      endDate
+      isActive
+      project {
+        id
+        name
+        code
+        status
+        priority
+        startDate
+        endDate
+      }
+    }
+  }
+}
+
+# Search employees by name or email
+query SearchEmployees(
+  $searchTerm: String!
+  $limit: Int = 20
+  $offset: Int = 0
+) @auth(level: USER_EMAIL_VERIFIED) {
+  employees(
+    where: {
+      _or: [
+        { firstName:      { contains: $searchTerm } }
+        { lastName:       { contains: $searchTerm } }
+        { email:          { contains: $searchTerm } }
+        { employeeNumber: { contains: $searchTerm } }
+        { jobTitle:       { contains: $searchTerm } }
+      ]
+      isActive: { eq: true }
+    }
+    limit:  $limit
+    offset: $offset
+    orderBy: [{ lastName: ASC }, { firstName: ASC }]
+  ) {
+    id
+    employeeNumber
+    firstName
+    lastName
+    email
+    jobTitle
+    employmentStatus
+    profilePicture
+    department {
+      id
+      name
+      code
+    }
+    role {
+      id
+      name
+      code
+    }
+  }
+}
+
+# Get employees filtered by department
+query GetEmployeesByDepartment(
+  $departmentId: UUID!
+  $limit:  Int = 50
+  $offset: Int = 0
+) @auth(level: USER_EMAIL_VERIFIED) {
+  employees(
+    where: {
+      departmentId: { eq: $departmentId }
+      isActive:     { eq: true }
+    }
+    limit:  $limit
+    offset: $offset
+    orderBy: [{ lastName: ASC }]
+  ) {
+    id
+    employeeNumber
+    firstName
+    lastName
+    email
+    jobTitle
+    employmentStatus
+    employmentType
+    hireDate
+    profilePicture
+    role {
+      id
+      name
+      code
+      level
+    }
+    manager {
+      id
+      firstName
+      lastName
+    }
+  }
+}
+
+# Get employees by status
+query GetEmployeesByStatus(
+  $status: String!
+  $limit:  Int = 50
+  $offset: Int = 0
+) @auth(level: USER_EMAIL_VERIFIED) {
+  employees(
+    where: {
+      employmentStatus: { eq: $status }
+      isActive:         { eq: true }
+    }
+    limit:  $limit
+    offset: $offset
+    orderBy: [{ hireDate: DESC }]
+  ) {
+    id
+    employeeNumber
+    firstName
+    lastName
+    email
+    jobTitle
+    employmentStatus
+    employmentType
+    hireDate
+    department {
+      id
+      name
+      code
+    }
+  }
+}
+
+# Get employee by Firebase UID (for auth)
+query GetEmployeeByFirebaseUid(
+  $firebaseUid: String!
+) @auth(level: USER_EMAIL_VERIFIED) {
+  employees(
+    where: { firebaseUid: { eq: $firebaseUid } }
+    limit: 1
+  ) {
+    id
+    employeeNumber
+    firstName
+    lastName
+    email
+    jobTitle
+    profilePicture
+    isActive
+    firebaseUid
+    department {
+      id
+      name
+      code
+    }
+    role {
+      id
+      name
+      code
+      level
+    }
+  }
+}
